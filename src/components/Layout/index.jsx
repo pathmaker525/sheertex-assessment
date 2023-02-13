@@ -9,11 +9,6 @@ const Layout = (props) => {
         padding: 8
       }}
     >
-      /**
-       * * General Header
-       * TODO: Convert any direct styling into tailwind classes
-       * ! Tailwind integration failed so default style is not working properly.
-       */
       <h1
         style={{ 
           fontSize: 24,
