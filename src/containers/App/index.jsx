@@ -8,8 +8,11 @@ import { getFollowerUrlOf } from 'utils';
 
 const App = () => {
   const [commonUsers, setCommonUsers] = useState([])
+  const [isLoading, setIsLoading] = useState(false)
 
   useEffect(() => {
+    setIsLoading(true)
+
     axios
       .all([
         axios.get(getFollowerUrlOf("tumiduong")),
@@ -32,18 +35,20 @@ const App = () => {
           return isIdInCommon
         })
 
-        console.log({commonData});
-
         setCommonUsers(commonData) 
+        setIsLoading(false)
       }))
       .catch((error) => {
         console.log({error});
         setCommonUsers([])
+        setIsLoading(false)
       })
+
   }, [])
 
   return (
     <Layout>
+      {isLoading ? <div>Loading...</div> : commonUsers.length === 0 && <div>They have no followers in common</div>}
       {commonUsers?.map((user, index) => <CommonFollowerCard key={index} data={user} />)}
     </Layout>
   );
