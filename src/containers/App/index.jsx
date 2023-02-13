@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Layout from "components/Layout";
 import CommonFollowerCard from 'components/CommonFollowerCard';
 
-import { getFollowerUrlOf } from 'utils';
+import { getFollowersUrlOf } from 'utils';
 
 const App = () => {
   const [commonUsers, setCommonUsers] = useState([])
@@ -13,6 +13,9 @@ const App = () => {
   useEffect(() => {
     setIsLoading(true)
 
+    /**
+     * * Axios version with no pagination parameter
+     */
     // axios
     //   .all([
     //     axios.get(getFollowerUrlOf("tumiduong")),
@@ -44,9 +47,12 @@ const App = () => {
     //     setIsLoading(false)
     //   })
 
+    /**
+     * * Octokit version with pagination parameter
+     */
     Promise.allSettled(([
-      getFollowerUrlOf('tumiduong'),
-      getFollowerUrlOf('mildlywilde')
+      getFollowersUrlOf('tumiduong'),
+      getFollowersUrlOf('mildlywilde')
     ]))
     .then((results) => {
       const {value: followerListOne} = results[0]
