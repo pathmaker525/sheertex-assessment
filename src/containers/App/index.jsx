@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios'
+// import axios from 'axios'
 
 import Layout from "components/Layout";
 import CommonFollowerCard from 'components/CommonFollowerCard';
@@ -13,36 +13,66 @@ const App = () => {
   useEffect(() => {
     setIsLoading(true)
 
-    axios
-      .all([
-        axios.get(getFollowerUrlOf("tumiduong")),
-        axios.get(getFollowerUrlOf("mildlywilde"))
-      ])
-      .then(axios.spread((userDataOne, userDataTwo) => {
-        const {data: followerListOne} = userDataOne
-        const {data: followerListTwo} = userDataTwo
+    // axios
+    //   .all([
+    //     axios.get(getFollowerUrlOf("tumiduong")),
+    //     axios.get(getFollowerUrlOf("mildlywilde"))
+    //   ])
+    //   .then(axios.spread((userDataOne, userDataTwo) => {
+    //     const {data: followerListOne} = userDataOne
+    //     const {data: followerListTwo} = userDataTwo
 
-        const commonData = followerListOne.filter((item) => {
-          const userId = item.id
-          let isIdInCommon = false
+    //     const commonData = followerListOne.filter((item) => {
+    //       const userId = item.id
+    //       let isIdInCommon = false
 
-          followerListTwo.map((item) => {
-            if (item.id === userId) {
-              isIdInCommon = true
-            }
-          })
+    //       followerListTwo.map((item) => {
+    //         if (item.id === userId) {
+    //           isIdInCommon = true
+    //         }
+    //       })
 
-          return isIdInCommon
+    //       return isIdInCommon
+    //     })
+
+    //     setCommonUsers(commonData) 
+    //     setIsLoading(false)
+    //   }))
+    //   .catch((error) => {
+    //     console.log({error});
+    //     setCommonUsers([])
+    //     setIsLoading(false)
+    //   })
+
+    Promise.allSettled(([
+      getFollowerUrlOf('tumiduong'),
+      getFollowerUrlOf('mildlywilde')
+    ]))
+    .then((results) => {
+      const {value: followerListOne} = results[0]
+      const {value: followerListTwo} = results[1]
+
+      const commonData = followerListOne?.filter((item) => {
+        const userId = item.id
+        let isIdInCommon = false
+
+        followerListTwo?.map((item) => {
+          if (item.id === userId) {
+            isIdInCommon = true
+          }
         })
 
-        setCommonUsers(commonData) 
-        setIsLoading(false)
-      }))
-      .catch((error) => {
-        console.log({error});
-        setCommonUsers([])
-        setIsLoading(false)
+        return isIdInCommon
       })
+
+      commonData !== undefined && setCommonUsers(commonData)
+      setIsLoading(false)
+    })
+    .catch((error) => {
+      console.log({error})
+      setCommonUsers([])
+      setIsLoading(false)
+    })
 
   }, [])
 
